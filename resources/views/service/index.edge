@@ -1,0 +1,16 @@
+@layout('master')
+
+@section('mainContent') 
+<div class="d-flex justify-content-center align-items-center">
+	<div>
+		<a class="btn btn-success" href="/service/new">+ Create New Service</a>
+		<hr/>
+		<br/>
+		<ol>
+			@each(service in services)
+				<li><a href="/service/details/{{service.id}}">{{ service.path }}</a></li>
+			@endeach
+		</ol>
+	</div>
+</div>
+@endsection

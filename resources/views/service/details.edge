@@ -1,0 +1,18 @@
+@layout('master')
+
+@section('mainContent') 
+<div class="d-flex justify-content-center align-items-center">
+	<div>
+		<table>
+			<tr><td><strong>Path:</strong></td><td><label>{{service.path}}</label></td></tr>
+			<tr><td><strong>API Token:</strong></td><td><label>{{service.token}}</label></td></tr>
+			<tr><td><strong>Encrypt Key:</strong></td><td><label>{{service.encrypt_key}}</label></td></tr>
+		</table>
+		<hr/>
+		<form method="post" action="/service/update/{{service.id}}">
+			<textarea id="json-input" autocomplete="off" rows="10" cols="50" name="json-input">{{service.value || ''}}</textarea><br/>
+			<button class="btn btn-primary" type="submit">Save</button>
+		</form>
+	</div>
+</div>
+@endsection
