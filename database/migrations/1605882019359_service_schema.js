@@ -7,10 +7,10 @@ class ServiceSchema extends Schema {
   up() {
     this.create("services", (table) => {
       table.increments();
-      table.text("path").notNullable().unique();
-      table.text("token").notNullable().unique();
-      table.text("encrypt_key").notNullable().unique();
-      table.text("value").nullable();
+      table.string("path", 254).notNullable().unique();
+      table.string("token", 254).notNullable().unique();
+      table.string("encrypt_key", 254).notNullable().unique();
+      table.text("value", 2000).nullable();
       table.timestamps();
     });
   }
