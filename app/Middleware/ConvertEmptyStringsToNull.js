@@ -1,17 +1,21 @@
-'use strict'
+"use strict";
 
 class ConvertEmptyStringsToNull {
-  async handle ({ request }, next) {
+  async handle({ request, response }, next) {
     if (Object.keys(request.body).length) {
       request.body = Object.assign(
-        ...Object.keys(request.body).map(key => ({
-          [key]: request.body[key] !== '' ? request.body[key] : null
+        ...Object.keys(request.body).map((key) => ({
+          [key]: request.body[key] !== "" ? request.body[key] : null,
         }))
-      )
+      );
     }
 
-    await next()
+    try {
+      await next();
+    } catch (e) {
+      response.redirect("/");
+    }
   }
 }
 
-module.exports = ConvertEmptyStringsToNull
+module.exports = ConvertEmptyStringsToNull;
