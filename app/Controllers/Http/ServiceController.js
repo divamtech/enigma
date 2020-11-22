@@ -35,16 +35,18 @@ class ServiceController {
       service.encrypt_key,
       process.env.ENC1
     );
-    service.value = JSON.stringify(
-      JSON.parse(
-        EncryptDecrypt.decrypt(
-          EncryptDecrypt.decrypt(service.value, process.env.ENC1),
-          process.env.ENC2
-        )
-      ),
-      null,
-      2
-    );
+    if (!!service.value && service.value.length > 0) {
+      service.value = JSON.stringify(
+        JSON.parse(
+          EncryptDecrypt.decrypt(
+            EncryptDecrypt.decrypt(service.value, process.env.ENC1),
+            process.env.ENC2
+          )
+        ),
+        null,
+        2
+      )
+    }
     return view.render("service.details", { service });
   }
 

@@ -13,6 +13,7 @@ class ConvertEmptyStringsToNull {
     try {
       await next();
     } catch (e) {
+      console.log("Error and redirect to home", e);
       response.redirect("/");
     }
   }
