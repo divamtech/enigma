@@ -1,31 +1,13 @@
-# Adonis fullstack application
+# Enigma
+<img src="public/icons/icon32.png" width="32" height="32" /> Enigma adonisJS nodeJS application to store environment variable securely and transfer though API. Very use full to update, pass to ECS and easy to manage.
 
-This is the fullstack boilerplate for AdonisJs, it comes pre-configured with.
-
-1. Bodyparser
-2. Session
-3. Authentication
-4. Web security middleware
-5. CORS
-6. Edge template engine
-7. Lucid ORM
-8. Migrations and seeds
-
-## Setup
-
-Use the adonis command to install the blueprint
-
-```bash
-adonis new yardstick
+```curl
+curl --location --request POST 'https://<host>/api1/service' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "token": "432320bb5bea597ec4cb901870f4bc97b3d6ca8afbf898ef785772820ee7bb8e",
+    "path": "node-ecs-dev-server"
+}'
 ```
 
-or manually clone the repo and then run `npm install`.
-
-
-### Migrations
-
-Run the following command to run startup migrations.
-
-```js
-adonis migration:run
-```
+##### Under MIT License
