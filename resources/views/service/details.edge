@@ -32,9 +32,11 @@
 <div class="d-flex justify-content-center align-items-center">
 	<div>
 		<table>
-			<tr><td><strong>Path:</strong></td><td><label>{{service.path}}</label></td></tr>
-			<tr><td><strong>API Token:</strong></td><td><label>{{service.token}}</label></td></tr>
-			<tr><td><strong>Encrypt Key:</strong></td><td><label>{{service.encrypt_key}}</label></td></tr>
+			<tr><td><strong>Path:</strong></td><td><label>{{service.path}}</label>&nbsp;&nbsp;&nbsp;<a href="#" class="btn btn-info">Edit</a></td></tr>
+			<tr><td colspan="2">&nbsp;</td></tr>
+			<tr><td><strong>API Token:</strong></td><td><label style="margin: auto;">{{service.token}}</label></td></tr>
+			<tr><td><strong>Encrypt Key:</strong></td><td><label style="margin: auto;">{{service.encrypt_key}}</label></td></tr>
+			<tr><td colspan="2"><a  href="#" class="btn btn-danger">Regenerate</a></td></tr>
 		</table>
 		<hr/>
 		<form method="post" action="/service/update/{{service.id}}">
