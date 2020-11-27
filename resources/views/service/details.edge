@@ -1,6 +1,34 @@
 @layout('master')
 
 @section('mainContent') 
+<script>
+	function jsonTextChange() {
+		val = $('#json-input').val()
+		try {
+			JSON.stringify(JSON.parse(val))
+			$('#submit_btn').prop( "disabled", false);
+			$('#invalid_json').hide();
+		} catch (e) {
+			$('#submit_btn').prop( "disabled", true);
+			$('#invalid_json').show();
+		}
+	}
+	function formatJSON() {
+		val = $('#json-input').val()
+		try {
+			$('#json-input').val(JSON.stringify(JSON.parse(val), null, 2))
+		} catch (e) {
+			$('#submit_btn').prop( "disabled", true);
+			$('#invalid_json').show();
+		}
+	}
+
+	$( document ).ready(function() {
+    jsonTextChange()
+});
+
+</script>
+
 <div class="d-flex justify-content-center align-items-center">
 	<div>
 		<table>
@@ -10,8 +38,16 @@
 		</table>
 		<hr/>
 		<form method="post" action="/service/update/{{service.id}}">
-			<textarea id="json-input" autocomplete="off" rows="10" cols="50" name="json-input">{{service.value || ''}}</textarea><br/>
-			<button class="btn btn-primary" type="submit">Save</button>
+			{{ csrfField() }}
+			<textarea id="json-input" autocomplete="off" rows="10" cols="70" name="json-input" onchange="jsonTextChange();"
+			onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();">{{service.value || ''}}</textarea><br/>
+			<div id="invalid_json" style="display: none;" class="mb-2">
+				<span class="badge badge-danger">Invalid JSON</span><br/>
+			</div>
+			<div class="d-flex justify-content-between align-items-center">
+			<button id="submit_btn" class="btn btn-primary" type="submit">Save</button>
+			<a id="format_btn" class="btn btn-dark" onclick="formatJSON()">Format JSON</a>
+			</div>
 		</form>
 	</div>
 </div>

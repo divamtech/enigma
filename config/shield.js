@@ -131,9 +131,9 @@ module.exports = {
   |
   */
   csrf: {
-    enable: false,
+    enable: true,
     methods: ["POST", "PUT", "DELETE"],
-    filterUris: ["api1/service"],
+    filterUris: [/^\/api1\/service/],
     cookieOptions: {
       httpOnly: false,
       sameSite: true,
