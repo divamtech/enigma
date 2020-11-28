@@ -58,11 +58,11 @@ class ServiceController {
     const service = new Service();
     service.path = request.input("path");
     service.token = EncryptDecrypt.encrypt(
-      EncryptDecrypt.uuidv4(),
+      EncryptDecrypt.keyGenerator(),
       process.env.ENC1
     );
     service.encrypt_key = EncryptDecrypt.encrypt(
-      EncryptDecrypt.uuidv4(),
+      EncryptDecrypt.keyGenerator(),
       process.env.ENC1
     );
     await service.save();

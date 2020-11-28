@@ -58,7 +58,11 @@ const aliases = {}
 |
 */
 const commands = [
-  'App/Commands/Decrypt'
+  'App/Commands/Encrypt',
+  'App/Commands/Decrypt',
+  'App/Commands/EncKeyGen',
+  'App/Commands/DbCreate',
+  'App/Commands/DbDrop'
 ]
 
 module.exports = { providers, aceProviders, aliases, commands }
