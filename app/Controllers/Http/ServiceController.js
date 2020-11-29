@@ -45,7 +45,7 @@ class ServiceController {
         ),
         null,
         2
-      )
+      );
     }
     return view.render("service.details", { service });
   }
@@ -67,26 +67,6 @@ class ServiceController {
     );
     await service.save();
     return response.redirect(`/service/details/${service.id}`);
-
-    // const service = new Service();
-    // const data = request.all();
-    // const pathval = request.only(["path"]);
-    // const serve = await Service.findBy("path", pathval.path);
-    // if (serve) {
-    //   return response.status(401).json({ error: "Path already exists" });
-    // }
-    // const json = {
-    //   path: data.path,
-    //   token: EncryptDecrypt.encrypt(data.token, process.env.ENC1),
-    //   encrypt_key: EncryptDecrypt.encrypt(data.encrypt_key, process.env.ENC1),
-    //   value: EncryptDecrypt.encrypt(
-    //     EncryptDecrypt.encrypt(data.value, process.env.ENC2),
-    //     process.env.ENC1
-    //   ),
-    // };
-    // service.fill(json);
-    // await service.save();
-    // return response.status(200).json({ message: "Path created" });
   }
 
   async update({ params, request, response }) {
