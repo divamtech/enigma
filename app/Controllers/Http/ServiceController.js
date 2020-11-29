@@ -81,9 +81,38 @@ class ServiceController {
     await service.save();
     return response.redirect("/services");
   }
+
+  async edit({ params, view }) {
+    const service = await Service.find(params.id);
+    return view.render("service.editPath", { service });
+  }
+
+  async editPathName({ params, request, response }) {
+    const service = await Service.find(params.id);
+    service.path = request.input("path").trim();
+    await service.save();
+    return response.redirect(`/service/details/${params.id}`);
+  }
+
+  async regenerateKeys({ params, response }) {
+    const service = await Service.find(params.id);
+    service.token = EncryptDecrypt.encrypt(
+      EncryptDecrypt.keyGenerator(),
+      process.env.ENC1
+    );
+    service.encrypt_key = EncryptDecrypt.encrypt(
+      EncryptDecrypt.keyGenerator(),
+      process.env.ENC1
+    );
+    await service.save();
+    return response.redirect(`/service/details/${params.id}`);
+  }
+
+  async delete({ params, response }) {
+    const service = await Service.find(params.id);
+    await service.delete();
+    response.redirect("/services");
+  }
 }
 
 module.exports = ServiceController;
-
-// TODO: the thing is we will have 2 encryption keys which will be stored in environment variables and then we have encrypt the token and auth token
-// TODO: Finally when we will be sending the value of JSON then we will encrypt it with encrypt_key.

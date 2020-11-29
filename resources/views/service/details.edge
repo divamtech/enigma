@@ -22,7 +22,7 @@
 			$('#invalid_json').show();
 		}
 	}
-
+	
 	$( document ).ready(function() {
     jsonTextChange()
 });
@@ -31,14 +31,19 @@
 
 <div class="d-flex justify-content-center align-items-center">
 	<div>
+	<a href="/service/delete/{{service.id}}" data-method="delete" data-confirm="Are you sure?" class="btn btn-danger">Delete Path</a>
 		<table>
 			<tr><td><strong>ENIGMA_URL:</strong></td><td><label style="margin: auto;">https://g-enigma.herokuapp.com/api1/service</label></td></tr>
 			<tr><td><strong>ENIGMA_PATH:</strong></td><td><label style="margin: auto;">{{service.path}}</label></td></tr>
-			<tr><td><strong>ENIGMA_PATH:</strong></td><td><label style="margin: auto;">{{service.token}}</label></td></tr>
+			<tr><td><strong>ENIGMA_TOKEN:</strong></td><td><label style="margin: auto;">{{service.token}}</label></td></tr>
 			<tr><td><strong>ENIGMA_KEY:</strong></td><td><label style="margin: auto;">{{service.encrypt_key}}</label></td></tr>
-			<tr><td colspan="2"><a  href="#" class="btn btn-danger">Regenerate</a></td>
-				<td colspan="2"><a  href="#" class="btn btn-info">Edit Path</a></td>
-				<td colspan="2"><a  href="#" class="btn btn-danger">Copy Keys</a></td></tr>
+			<tr>
+				<td colspan="2">
+				<a href="/service/regenerateKeys/{{service.id}}" class="btn btn-danger">Regenerate</a>
+					<a style="margin-right: 10px;margin-left: 10px;" href="/service/edit/{{service.id}}" class="btn btn-danger">Edit Path</a>
+					<a onclick="copy()" class="btn btn-info">Copy Keys</a>
+				</td>
+			</tr>
 		</table>
 		<hr/>
 		<form method="post" action="/service/update/{{service.id}}">

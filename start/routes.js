@@ -29,10 +29,17 @@ Route.group(() => {
   Route.get("/services", "ServiceController.index");
   Route.get("/service/details/:id", "ServiceController.details");
   Route.get("/service/new", "ServiceController.createNew");
+  Route.get("/service/edit/:id", "ServiceController.edit");
+  Route.get("/service/regenerateKeys/:id", "ServiceController.regenerateKeys");
+  Route.get("/service/delete/:id", "ServiceController.delete");
+
   Route.post("/service/create", "ServiceController.create").as(
     "create_new_service"
   );
   Route.post("/service/update/:id", "ServiceController.update");
+  Route.post("/service/editPath/:id", "ServiceController.editPathName").as(
+    "update_path_name"
+  );
 }).middleware(["auth"]);
 
 Route.post("/api1/service", "ServiceController.apiServiceDetails");
