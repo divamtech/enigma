@@ -15,31 +15,22 @@
 
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use("Route");
-const Service = use("App/Models/Service");
-const User = use("App/Models/User");
 
 Route.get("/", "UserController.index").as("home");
-// Route.on("/").render("Layout");
-// Route.get("/users", "UserController.index");
 Route.post("/user/login", "UserController.login").as("user_login");
 Route.post("/user/create", "UserController.create").as("user_create");
 Route.get("/user/logout", "UserController.logout").as("user_logout");
 
 Route.group(() => {
+  Route.get("/service/new", "ServiceController.createNew");
+  Route.post("/service/create", "ServiceController.create");
   Route.get("/services", "ServiceController.index");
   Route.get("/service/details/:id", "ServiceController.details");
-  Route.get("/service/new", "ServiceController.createNew");
-  Route.get("/service/edit/:id", "ServiceController.edit");
-  Route.get("/service/regenerateKeys/:id", "ServiceController.regenerateKeys");
-  Route.get("/service/delete/:id", "ServiceController.delete");
-
-  Route.post("/service/create", "ServiceController.create").as(
-    "create_new_service"
-  );
+  Route.get("/service/regenerate_keys/:id", "ServiceController.regenerateKeys");
   Route.post("/service/update/:id", "ServiceController.update");
-  Route.post("/service/editPath/:id", "ServiceController.editPathName").as(
-    "update_path_name"
-  );
+  Route.get("/service/edit_path/:id", "ServiceController.editPath");
+  Route.post("/service/update_path/:id", "ServiceController.updatePath");
+  Route.get("/service/delete/:id", "ServiceController.delete");
 }).middleware(["auth"]);
 
 Route.post("/api1/service", "ServiceController.apiServiceDetails");

@@ -2,7 +2,7 @@
 
 @section('mainContent') 
 <div class="d-flex justify-content-center align-items-center">
-	<form action="/service/editPath/{{service.id}}" method="post">
+<form action="/service/update_path/{{service.id}}" method="post">
 		{{ csrfField() }}
 		<div class="form-group">
 		<label for="exampleInputEmail1">Enter new service path name</label>

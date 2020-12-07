@@ -13,6 +13,7 @@
 			$('#invalid_json').show();
 		}
 	}
+
 	function formatJSON() {
 		val = $('#json-input').val()
 		try {
@@ -22,40 +23,88 @@
 			$('#invalid_json').show();
 		}
 	}
-	
-	$( document ).ready(function() {
-    jsonTextChange()
-});
 
+	$(document).ready(function() {
+		jsonTextChange()
+		$('#enigma_url').html(window.location.origin+$('#enigma_url').html());
+		$('#curl_code').html(curlCode('<br/>'));
+	});
+
+	function curlCode(joiner = ' ') {
+		const host = $('#enigma_url').html()
+		const body = {path: $('#enigma_path').html(), token: $('#enigma_token').html()}
+		return ["curl --location --request POST '"+host+"'",
+						"--header 'Content-Type: application/json'", 
+						"--data-raw '"+JSON.stringify(body)+"'"
+					].join(joiner)
+	}
+
+	function copyToClipboard(textToCopy) {
+		const elem = document.createElement('textarea');
+		elem.value = textToCopy;
+		document.body.appendChild(elem);
+		elem.select();
+		document.execCommand('copy');
+		document.body.removeChild(elem);
+	}
+
+	function copyENV() {
+		const toBeCopy = {
+			ENIGMA_URL: $('#enigma_url').html(),
+			ENIGMA_PATH: $('#enigma_path').html(),
+			ENIGMA_TOKEN: $('#enigma_token').html(),
+			ENIGMA_KEY: $('#enigma_key').html(),
+		}
+		const finalText = Object.keys(toBeCopy).reduce(function(acc, k, i, arr) {
+			return i+1 == arr.length ? acc + k+'='+toBeCopy[k] : acc + k+'='+toBeCopy[k] + '\\n'
+		}, '');
+		copyToClipboard(finalText);
+	}
+
+	function copyCurl() {
+		copyToClipboard(curlCode());
+	}
+
+	function copyJSON() {
+		copyToClipboard($('#json-input').val());
+	}
 </script>
 
 <div class="d-flex justify-content-center align-items-center">
 	<div>
-	<a href="/service/delete/{{service.id}}" data-method="delete" data-confirm="Are you sure?" class="btn btn-danger">Delete Path</a>
 		<table>
-			<tr><td><strong>ENIGMA_URL:</strong></td><td><label style="margin: auto;">https://g-enigma.herokuapp.com/api1/service</label></td></tr>
-			<tr><td><strong>ENIGMA_PATH:</strong></td><td><label style="margin: auto;">{{service.path}}</label></td></tr>
-			<tr><td><strong>ENIGMA_TOKEN:</strong></td><td><label style="margin: auto;">{{service.token}}</label></td></tr>
-			<tr><td><strong>ENIGMA_KEY:</strong></td><td><label style="margin: auto;">{{service.encrypt_key}}</label></td></tr>
 			<tr>
-				<td colspan="2">
-				<a href="/service/regenerateKeys/{{service.id}}" class="btn btn-danger">Regenerate Keys</a>
-					<a style="margin-right: 10px;margin-left: 10px;" href="/service/edit/{{service.id}}" class="btn btn-danger">Edit Path</a>
-					<a onclick="copy()" class="btn btn-info">Copy Keys</a>
+				<td colspan="2" class="pt-2 pb-2">
+					<div class="d-flex justify-content-between align-items-center">
+						<a href="/" class="btn btn-secondary">← Back</a>
+						<a onclick="copyENV()" class="btn btn-dark">Copy ENV</a>
+						<a href="/service/edit_path/{{service.id}}" class="btn btn-primary">Edit</a>
+						<a href="/service/regenerate_keys/{{service.id}}" class="btn btn-warning">Regenerate Keys</a>
+						<a href="/service/delete/{{service.id}}" data-method="delete" data-confirm="Are you sure?" class="btn btn-danger">Delete</a>
+					</div>
 				</td>
 			</tr>
+			<tr><td><strong>ENIGMA_URL:</strong></td><td><label id="enigma_url" style="margin: auto;">/api1/service</label></td></tr>
+			<tr><td><strong>ENIGMA_PATH:</strong></td><td><label id="enigma_path" style="margin: auto;">{{service.path}}</label></td></tr>
+			<tr><td><strong>ENIGMA_TOKEN:</strong></td><td><label id="enigma_token" style="margin: auto;">{{service.token}}</label></td></tr>
+			<tr><td><strong>ENIGMA_KEY:</strong></td><td><label id="enigma_key" style="margin: auto;">{{service.encrypt_key}}</label></td></tr>
+			<tr><td colspan="2" class="pt-2 pb-2">
+				<a onclick="copyCurl()" class="btn btn-dark">Copy cURL</a>
+				<pre id="curl_code" class="p-2" style="background-color: lightgray"></pre>
+			</td></tr>
 		</table>
-		<hr/>
+
 		<form method="post" action="/service/update/{{service.id}}">
 			{{ csrfField() }}
-			<textarea id="json-input" autocomplete="off" rows="10" cols="70" name="json-input" onchange="jsonTextChange();"
-			onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();">{{service.value || ''}}</textarea><br/>
+			<textarea id="json-input" autocomplete="off" rows="10" cols="85" name="json-input" onchange="jsonTextChange();"
+			onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();">{{service.value}}</textarea><br/>
 			<div id="invalid_json" style="display: none;" class="mb-2">
 				<span class="badge badge-danger">Invalid JSON</span><br/>
 			</div>
 			<div class="d-flex justify-content-between align-items-center">
 			<button id="submit_btn" class="btn btn-primary" type="submit">Save</button>
-			<a id="format_btn" class="btn btn-dark" onclick="formatJSON()">Format JSON</a>
+			<a onclick="copyJSON()" class="btn btn-dark">Copy JSON</a>
+			<a id="format_btn" class="btn btn-success" onclick="formatJSON()">Format JSON</a>
 			</div>
 		</form>
 	</div>
