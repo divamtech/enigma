@@ -1,0 +1,14 @@
+@layout('master')
+
+@section('mainContent') 
+<div class="d-flex justify-content-center align-items-center">
+<form action="/service/update_path/{{service.id}}" method="post">
+		{{ csrfField() }}
+		<div class="form-group">
+		<label for="exampleInputEmail1">Enter new service path name</label>
+		<input type="text" name="path" class="form-control" id="path" placeholder="Path" value="{{service.path}}">
+		</div>
+		<button class="btn btn-success" type="submit">Update</button>
+	</form>
+</div>
+@endsection

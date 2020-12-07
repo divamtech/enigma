@@ -2,7 +2,7 @@
 
 @section('mainContent') 
 <div class="d-flex justify-content-center align-items-center">
-	<form action="{{ route('create_new_service') }}" method="post">
+	<form action="/service/create" method="post">
 		{{ csrfField() }}
 		<div class="form-group">
 		<label for="exampleInputEmail1">Enter service path name</label>
