@@ -1,5 +1,7 @@
-# Enigma
-<img src="public/icons/icon32.png" width="32" height="32" /> Enigma adonisJS nodeJS application to store environment variable securely and transfer though API. Very use full to update, pass to ECS and easy to manage.
+# <img src="public/icons/icon32.png" width="32" height="32" /> nigma
+Enigma is a lightweight nodeJS application to store environment variable securely and transfer though API. Very useful to update, pass to ECS and easy to manage. You can also run it to aws:lambda for production preferred and heroku for testing/sandbox env.
+
+<img src="public/enigma_screen.png" width="100%" alt="enigma_page" />
 
 ```curl
 curl --location --request POST 'https://<host>/api1/service' \
@@ -69,5 +71,70 @@ dplain = decipher.update(Base64.strict_decode64(encrypted_text)) + decipher.fina
 puts dplain
 ```
 
+### Rails Integration
+1. Make file at `config/enigma.rb`
+
+```ruby
+# config/enigma.rb
+
+begin
+  unless ENV['ENIGMA_PATH'].present? && ENV['ENIGMA_TOKEN'].present? && ENV['ENIGMA_URL'].present? && ENV['ENIGMA_KEY'].present?
+    puts 'ENIGMA SKIPPED'
+    return
+  end
+  params = { path: ENV['ENIGMA_PATH'], token: ENV['ENIGMA_TOKEN'] }.to_json
+  resp = Faraday.post(ENV['ENIGMA_URL'], params, "Content-Type" => "application/json")
+  encrypted = JSON.parse(resp.body)["value"]
+
+  enigma_key = ENV['ENIGMA_KEY']
+  iv = enigma_key[0...16]
+  key = enigma_key[16..-1]
+
+  decipher = OpenSSL::Cipher::AES.new(256, :CBC)
+  decipher.decrypt
+  decipher.iv = iv
+  decipher.key = key
+  plain = decipher.update(Base64.strict_decode64(encrypted)) + decipher.final
+
+  envs = JSON.parse(plain)
+  envs.each do |key, value|
+    ENV[key] = value
+  end
+  puts "Enigma setup completed"
+rescue => e
+  puts "Enigma setup failed: " + e.message
+end
+```
+
+2. Create enigma enable at `config/application.rb` as:
+```ruby
+#config/application.rb
+
+require_relative 'boot'
+
+require 'rails/all'
+
+# Require the gems listed in Gemfile, including any gems
+# you've limited to :test, :development, or :production.
+Bundler.require(*Rails.groups)
+
+############################
+require_relative 'enigma'
+############################
+
+module RailsApp
+  class Application < Rails::Application
+    # Initialize configuration defaults for originally generated Rails version.
+    config.load_defaults 6.0
+
+    # Settings in config/environments/* take precedence over those specified here.
+    # Application configuration can go into files in config/initializers
+    # -- all .rb files in that directory are automatically loaded after loading
+    # the framework and any gems in your application.
+  end
+end
+```
+
+[see more code references at gist](https://gist.github.com/dayitv89/0db2bb1468108b07a7b7fdc38b27964b)
 
 ##### Under MIT License
