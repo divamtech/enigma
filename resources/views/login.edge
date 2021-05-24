@@ -2,16 +2,22 @@
 
 @section('mainContent') 
 	<div class="d-flex justify-content-center align-items-center">
-		<form action="{{ route('user_login') }}" method="post">
+		<form action="{{ route('user_login') }}" method="POST">
 			{{ csrfField() }}
 			<div class="form-group">
 			<label for="exampleInputEmail1">Email address</label>
 			<input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
 			</div>
+			@if(flashMessages.has('errors.email'))
+          	<small>{{ flashMessages.get("errors.email") }}</small>
+          	@endif
 			<div class="form-group">
 			<label for="exampleInputPassword1">Password</label>
 			<input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
 			</div>
+			@if(flashMessages.has('errors.password'))
+          	<small>{{ flashMessages.get("errors.password") }}</small>
+          	@endif
 			<button class="btn btn-primary" type="submit">Login</button>
 		</form>
 	</div>
