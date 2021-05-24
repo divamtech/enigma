@@ -1,9 +1,11 @@
 @layout('master')
 
 @section('mainContent') 
-
+<script src="/yeti/jquery.min.js"></script>
+<script src="/yeti/bootstrap.bundle.min.js"></script>
 <script>
-	function jsonTextChange() {
+	$(document).ready(function() {
+		jsonTextChange() {
 		val = $('#json-input').val()
 		try {
 			JSON.stringify(JSON.parse(val))
@@ -15,7 +17,10 @@
 		}
 	}
 
-	function formatJSON() {
+  });
+	
+  $(document).ready(function() {
+	   formatJSON() {
 		val = $('#json-input').val()
 		try {
 			$('#json-input').val(JSON.stringify(JSON.parse(val), null, 2))
@@ -24,6 +29,7 @@
 			$('#invalid_json').show();
 		}
 	}
+});
 
 	$(document).ready(function() {
 		jsonTextChange()
@@ -31,7 +37,8 @@
 		$('#curl_code').html(curlCode('<br/>'));
 	});
 
-	function curlCode(joiner = ' ') {
+	$(document).ready(function() {
+		 curlCode(joiner = ' ') {
 		const host = $('#enigma_url').html()
 		const body = {path: $('#enigma_path').html(), token: $('#enigma_token').html()}
 		return ["curl --location --request POST '"+host+"'",
@@ -39,8 +46,10 @@
 						"--data-raw '"+JSON.stringify(body)+"'"
 					].join(joiner)
 	}
+});
 
-	function copyToClipboard(textToCopy) {
+$(document).ready(function() {
+	copyToClipboard(textToCopy) {
 		const elem = document.createElement('textarea');
 		elem.value = textToCopy;
 		document.body.appendChild(elem);
@@ -48,8 +57,10 @@
 		document.execCommand('copy');
 		document.body.removeChild(elem);
 	}
+});
 
-	function copyENV() {
+$(document).ready(function() {
+	 copyENV() {
 		const toBeCopy = {
 			ENIGMA_URL: $('#enigma_url').html(),
 			ENIGMA_PATH: $('#enigma_path').html(),
@@ -61,14 +72,16 @@
 		}, '');
 		copyToClipboard(finalText);
 	}
+});
 
-	function copyCurl() {
+$(document).ready(function() { copyCurl() {
 		copyToClipboard(curlCode());
 	}
-
-	function copyJSON() {
+});
+	$(document).ready(function() { copyJSON() {
 		copyToClipboard($('#json-input').val());
 	}
+});
 </script>
 
 <div class="d-flex justify-content-center align-items-center">
@@ -105,7 +118,7 @@
 			<div class="d-flex justify-content-between align-items-center">
 			<button id="submit_btn" class="btn btn-primary" type="submit">Save</button>
 			<a onclick="copyJSON()" class="btn btn-dark">Copy JSON</a>
-			<a id="format_btn" class="btn btn-success" onclick="" onclick="formatJSON()">Format JSON</a>
+			<a id="format_btn" class="btn btn-success" onclick="formatJSON()">Format JSON</a>
 			</div>
 		</form>
 	</div>
