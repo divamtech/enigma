@@ -1,5 +1,4 @@
 import crypto from 'crypto';
-import { AES } from 'crypto-ts';
 
 export default class EncryptDecrypt {
   public static keyGenerator() {

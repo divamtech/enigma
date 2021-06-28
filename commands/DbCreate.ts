@@ -1,4 +1,6 @@
 import { BaseCommand } from '@adonisjs/core/build/standalone'
+import Env from 'env'
+import Knex from 'knex'
 
 export default class DbCreate extends BaseCommand {
 
@@ -10,7 +12,7 @@ export default class DbCreate extends BaseCommand {
   /**
    * Command description is displayed in the "help" output
    */
-  public static description = ''
+  public static description = 'Create Database'
 
   public static settings = {
     /**
@@ -25,8 +27,14 @@ export default class DbCreate extends BaseCommand {
      */
     stayAlive: false,
   }
+  info: any
 
   public async run () {
-    this.logger.info('Hello world!')
+    const config = require(process.cwd() + '/config/database');
+    config[config.connection].connection.database = null;
+    const knex = Knex(config[config.connection]);
+    await knex.raw(`CREATE DATABASE IF NOT EXISTS ${Env.get('MYSQL_DB_NAME')}`);
+    await knex.destroy();
+    this.info('DB created');
   }
 }

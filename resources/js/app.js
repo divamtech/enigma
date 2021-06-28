@@ -1,3 +1,5 @@
+import '../css/bootstrap.css'
 import '../css/bootstrap.min.css'
+import '../css/app.css'
 import './jquery.min'
 import './bootstrap.bundle.min'

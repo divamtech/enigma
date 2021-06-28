@@ -1,16 +1,97 @@
 @layout('master')
 
-@section('mainContent') 
-<div class="d-flex justify-content-center align-items-center">
-	<div>
+@section('mainContent')
+<style>
+	.dropbtn {
+	  background-color: #3498DB;
+	  color: white;
+	  font-size: 16px;
+	  border: none;
+	  cursor: pointer;
+	}
+	
+	.dropbtn:hover, .dropbtn:focus {
+	  background-color: #2980B9;
+	}
+	
+	.dropdown {
+	  position: relative;
+	  display: inline-block;
+	}
+	
+	.dropdown-content {
+	  display: none;
+	  position: absolute;
+	  background-color: #f1f1f1;
+	  min-width: 160px;
+	  overflow: auto;
+	  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	  z-index: 1;
+	}
+	
+	.dropdown-content a {
+	  color: black;
+	  padding: 12px 16px;
+	  text-decoration: none;
+	  display: block;
+	}
+	
+	.dropdown a:hover {background-color: #ddd;}
+	
+	.show {display: block;}
+	</style>
+<script>
+	$(document).on('click', '.dropbtn', function(){  
+		var button_id = $(this).attr("id"); 
+		document.getElementById('myDropdown'+button_id+'').classList.toggle("show");
+		});
+	
+	// Close the dropdown if the user clicks outside of it
+	window.onclick = function(event) {
+	  if (!event.target.matches('.dropbtn')) {
+		var dropdowns = document.getElementsByClassName("dropdown-content");
+		var i;
+		for (i = 0; i < dropdowns.length; i++) {
+		  var openDropdown = dropdowns[i];
+		  if (openDropdown.classList.contains('show')) {
+			openDropdown.classList.remove('show');
+		  }
+		}
+	  }
+	}
+	</script> 
+<div class='head-section'>
+	<div class="d-flex justify-content-between flex-direction-column align-items-center mb-2">
+		<h3 >Services</h3>
 		<a class="btn btn-success" href="/service/new">+ Create New Service</a>
-		<hr/>
-		<br/>
-		<ol>
-			@each(service in services)
-				<li><a href="/service/details/{{service.id}}">{{ service.path }}</a></li>
-			@endeach
-		</ol>
 	</div>
+	<table class="table table-hover">
+		<thead>
+			<tr>
+			<th scope="col">Secrets Engines</th>
+			<th ></th>
+			</tr>
+			
+		</thead>
+		<tbody>
+			@each(service in services)
+			<tr>
+				<td>
+					<a class='links' href="/service/details/{{service.id}}">{{ service.path }}</a>
+				</td> 
+				<td class="align-items-center mb-2">
+					<button id="{{service.id}}" class="dropbtn">...</button>
+					<div id="myDropdown{{service.id}}" class="dropdown-content">
+						<a href="/service/details/{{service.id}}#configuration">Details</a>
+						<a href="/service/addDetails/{{service.id}}">Create new version</a>
+						<a href="/service/delete/{{service.id}}" data-method="delete" data-confirm="Are you sure?">Delete</a>
+					  </div>
+				</td>
+				
+			</tr>
+		@endeach
+		</tbody>
+	</table>
 </div>
+
 @endsection

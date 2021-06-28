@@ -1,4 +1,6 @@
 import { BaseCommand } from '@adonisjs/core/build/standalone'
+import Env from 'env'
+import Knex from 'knex'
 
 export default class DbDrop extends BaseCommand {
 
@@ -10,7 +12,7 @@ export default class DbDrop extends BaseCommand {
   /**
    * Command description is displayed in the "help" output
    */
-  public static description = ''
+  public static description = 'Drop database'
 
   public static settings = {
     /**
@@ -27,6 +29,10 @@ export default class DbDrop extends BaseCommand {
   }
 
   public async run () {
-    this.logger.info('Hello world!')
+    const config = require(process.cwd() + '/config/database');
+    const knex = Knex(config[config.connection]);
+    await knex.raw(`DROP DATABASE ${Env.get("DB_DATABASE")}`);
+    await knex.destroy();
+    this.info('DB dropped');
   }
 }

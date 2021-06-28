@@ -52,12 +52,31 @@ export default class ServicesController {
             );
           service.value = JSON.stringify(JSON.parse(cipher1), null, 2);
         } else {
-          service.value = '{}';
+          service.value = `{
+    " ":" "
+}`;
         }
-        return view.render("service/details", { service });
+        const obj = JSON.parse(service.value);
+        return view.render("service/details", { service , obj});
     }
+    public async addDetails({ params, view }:HttpContextContract) {
+      const service = await Service.findOrFail(params.id);
+      service.token = EncryptDecrypt.decrypt(service.token, process.env.ENC1);
+      service.encrypt_key = EncryptDecrypt.decrypt(service.encrypt_key, process.env.ENC1);
+      if (!!service.value && service.value.length > 0) {
+        const cipher1 = EncryptDecrypt.decrypt(
+          EncryptDecrypt.decrypt(service.value, process.env.ENC1),
+          process.env.ENC2
+          );
+        service.value = JSON.stringify(JSON.parse(cipher1), null, 2);
+      } else {
+        service.value = '{}';
+      }
+      const obj = JSON.parse(service.value);
+      return view.render("service/addDetails", { service , obj});
+  }
     
-    public async update({ params, request, response }:HttpContextContract) {
+    public async update({ params, request, response }: HttpContextContract) {
         const service = await Service.findOrFail(params.id);
         const value = JSON.stringify(JSON.parse(request.input("json-input").trim()));
         service.value = EncryptDecrypt.encrypt(
@@ -67,6 +86,26 @@ export default class ServicesController {
         await service.save();
         return response.redirect("/services");
     }
+
+    public async updateByForm({ params, request, response }: HttpContextContract) {
+      const service = await Service.findOrFail(params.id);
+      const details = request.all();
+      const obj = {};
+      if (!!details.key && details.key.length > 0 && !!details.key[0]) {
+        for (var i = 0; i < details.key.length; i++) {
+          if (!!details.key[i] || !!details.value[i] ) {
+             obj[details.key[i]]=details.value[i]
+          }
+        }
+      }
+      const value = JSON.stringify(obj);
+      service.value = EncryptDecrypt.encrypt(
+        EncryptDecrypt.encrypt(value, process.env.ENC2),
+        process.env.ENC1
+      );
+      await service.save();
+      return response.redirect("/services");
+  }
     
     public async editPath({ params, view }:HttpContextContract) {
         const service = await Service.find(params.id);

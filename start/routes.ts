@@ -31,8 +31,10 @@ Route.group(() => {
   Route.post("/service/create", "ServicesController.create");
   Route.get("/services", "ServicesController.index");
   Route.get("/service/details/:id", "ServicesController.details");
+  Route.get("/service/addDetails/:id", "ServicesController.addDetails");
   Route.get("/service/regenerate_keys/:id", "ServicesController.regenerateKeys");
   Route.post("/service/update/:id", "ServicesController.update");
+  Route.post("/service/updateByForm/:id", "ServicesController.updateByForm");
   Route.get("/service/edit_path/:id", "ServicesController.editPath");
   Route.post("/service/update_path/:id", "ServicesController.updatePath");
   Route.get("/service/delete/:id", "ServicesController.delete");

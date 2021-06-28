@@ -1,10 +1,8 @@
 @layout('master')
 
 @section('mainContent') 
-
 <script>
-	$(document).ready(function() {
-		jsonTextChange() {
+	function jsonTextChange() {
 		val = $('#json-input').val()
 		try {
 			JSON.stringify(JSON.parse(val))
@@ -16,10 +14,7 @@
 		}
 	}
 
-  });
-	
-  $(document).ready(function() {
-	   formatJSON() {
+	function formatJSON() {
 		val = $('#json-input').val()
 		try {
 			$('#json-input').val(JSON.stringify(JSON.parse(val), null, 2))
@@ -28,7 +23,6 @@
 			$('#invalid_json').show();
 		}
 	}
-});
 
 	$(document).ready(function() {
 		jsonTextChange()
@@ -36,8 +30,7 @@
 		$('#curl_code').html(curlCode('<br/>'));
 	});
 
-	$(document).ready(function() {
-		 curlCode(joiner = ' ') {
+	function curlCode(joiner = ' ') {
 		const host = $('#enigma_url').html()
 		const body = {path: $('#enigma_path').html(), token: $('#enigma_token').html()}
 		return ["curl --location --request POST '"+host+"'",
@@ -45,10 +38,8 @@
 						"--data-raw '"+JSON.stringify(body)+"'"
 					].join(joiner)
 	}
-});
 
-$(document).ready(function() {
-	copyToClipboard(textToCopy) {
+	function copyToClipboard(textToCopy) {
 		const elem = document.createElement('textarea');
 		elem.value = textToCopy;
 		document.body.appendChild(elem);
@@ -56,10 +47,8 @@ $(document).ready(function() {
 		document.execCommand('copy');
 		document.body.removeChild(elem);
 	}
-});
-
-$(document).ready(function() {
-	 copyENV() {
+	
+	function copyENV() {
 		const toBeCopy = {
 			ENIGMA_URL: $('#enigma_url').html(),
 			ENIGMA_PATH: $('#enigma_path').html(),
@@ -71,55 +60,124 @@ $(document).ready(function() {
 		}, '');
 		copyToClipboard(finalText);
 	}
-});
 
-$(document).ready(function() { copyCurl() {
+	function copyCurl() {
 		copyToClipboard(curlCode());
 	}
-});
-	$(document).ready(function() { copyJSON() {
+
+	function copyJSON() {
 		copyToClipboard($('#json-input').val());
 	}
-});
+
+	$(function() {
+	$('input[name="intervaltype"]').on('click',function(){
+		$('#row-data').toggleClass('active');
+		$('#list-data').toggleClass('active');
+		});
+	});
 </script>
 
-<div class="d-flex justify-content-center align-items-center">
-	<div>
-		<table>
-			<tr>
-				<td colspan="2" class="pt-2 pb-2">
-					<div class="d-flex justify-content-between align-items-center">
-						<a href="/" class="btn btn-secondary">← Back</a>
-						<a onclick="copyENV()" class="btn btn-dark">Copy ENV</a>
-						<a href="/service/edit_path/{{service.id}}" class="btn btn-primary">Edit</a>
-						<a href="/service/regenerate_keys/{{service.id}}" class="btn btn-warning">Regenerate Keys</a>
-						<a href="/service/delete/{{service.id}}" data-method="delete" data-confirm="Are you sure?" class="btn btn-danger">Delete</a>
+<div class="head-section">
+	<div class="row">
+		<div class="col-md-12">
+			<h3 >{{service.path}}</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="profile-head">
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li class="nav-item">
+						<a class="nav-link active" id="secrets-tab" data-toggle="tab" href="#secrets"
+							role="tab" aria-controls="home" aria-selected="true">Secrets</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" id="configuration-tab" data-toggle="tab" href="#configuration" role="tab"
+							aria-controls="profile" aria-selected="false">Configuration</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div style="margin-top:10px;">
+		<div class="tab-content secrets-tab" id="myTabContent">
+			<div class="tab-pane fade show active row" id="secrets" aria-labelledby="secrets-tab">
+				<div class="d-flex justify-content-between flex-direction-column align-items-center mb-2">
+					<div style="padding-left:15px;"> 
+						<label class="switch">
+							<input id="custom-mark" name="intervaltype" type="checkbox">
+							<span class="slider round"></span>
+						  </label>
+                          <label>
+							<span class="checkmark">JSON</span>
+						  </label>
 					</div>
-				</td>
-			</tr>
-			<tr><td><strong>ENIGMA_URL:</strong></td><td><label id="enigma_url" style="margin: auto;">/api1/service</label></td></tr>
-			<tr><td><strong>ENIGMA_PATH:</strong></td><td><label id="enigma_path" style="margin: auto;">{{service.path}}</label></td></tr>
-			<tr><td><strong>ENIGMA_TOKEN:</strong></td><td><label id="enigma_token" style="margin: auto;">{{service.token}}</label></td></tr>
-			<tr><td><strong>ENIGMA_KEY:</strong></td><td><label id="enigma_key" style="margin: auto;">{{service.encrypt_key}}</label></td></tr>
-			<tr><td colspan="2" class="pt-2 pb-2">
-				<a onclick="copyCurl()" class="btn btn-dark">Copy cURL</a>
-				<pre id="curl_code" class="p-2" style="background-color: lightgray"></pre>
-			</td></tr>
-		</table>
+					<div>
+						<a onclick="copyJSON()" class="btn btn-dark">Copy JSON</a>
+						<a class="btn btn-success" href="/service/addDetails/{{service.id}}">+ Create new version</a>
+					</div>
+				</div>
+				<div class="tab-content">
+					<div class="tab-pane active" id="list-data" role="tabpanel">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+								<th scope="col" style="padding-left:15px;">Key</th>
+								<th scope="col">values</th>
+								</tr>
+							</thead>
 
-		<form method="post" action="/service/update/{{service.id}}">
-			{{ csrfField() }}
-			<textarea id="json-input" autocomplete="off" rows="10" cols="85" name="json-input" onchange="jsonTextChange();"
-			onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();">{{service.value}}</textarea><br/>
-			<div id="invalid_json" style="display: none;" class="mb-2">
-				<span class="badge badge-danger">Invalid JSON</span><br/>
+							<tbody>
+								@each((val, key) in obj)
+								<tr>
+									<td>{{key}}</td> 
+									<td><a id="{{key}}" onclick="copyToClipboard('{{val}}')"class="value">
+										<img src="/copy.svg" width="15" height="15"></a>&nbsp;&nbsp;
+										<span id="{{val}}">{{val}}</span>
+									</td> 
+								</tr>
+								@end
+							</tbody>
+						</table>
+					</div>
+					<div class="tab-pane" id="row-data" role="tabpanel">
+						<hr style="margin-top:0px;">
+						<form method="post" action="/service/update/{{service.id}}">
+							{{ csrfField() }}
+							<div class="textarea-wrapper">
+							<textarea id="json-input" class="textarea1" autocomplete="off" rows="15" cols="85" name="json-input" onchange="jsonTextChange();"
+							onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();">{{service.value}}</textarea>
+							</div><br/>
+							<div id="invalid_json" style="display: none;" class="mb-2">
+								<span class="badge badge-danger">Invalid JSON</span><br/>
+							</div>
+						</form>
+					</div>
+				</div>
 			</div>
-			<div class="d-flex justify-content-between align-items-center">
-			<button id="submit_btn" class="btn btn-primary" type="submit">Save</button>
-			<a onclick="copyJSON()" class="btn btn-dark">Copy JSON</a>
-			<a id="format_btn" class="btn btn-success" onclick="formatJSON()">Format JSON</a>
+			<div class="tab-pane fade row" id="configuration" aria-labelledby="configuration-tab">
+				<table>
+					<tr>
+						<td colspan="2" class="pt-2 pb-2">
+							<div class="d-flex justify-content-between align-items-center">
+								<a onclick="copyENV()" class="btn btn-dark">Copy ENV</a>
+								<a href="/service/edit_path/{{service.id}}" class="btn btn-primary">Edit</a>
+								<a href="/service/regenerate_keys/{{service.id}}" class="btn btn-warning">Regenerate Keys</a>
+								<a href="/service/delete/{{service.id}}" data-method="delete" data-confirm="Are you sure?" class="btn btn-danger">Delete</a>
+							</div>
+						</td>
+					</tr>
+					<tr><td><strong>ENIGMA_URL:</strong></td><td><label id="enigma_url" style="margin: auto;">/api1/service</label></td></tr>
+					<tr><td><strong>ENIGMA_PATH:</strong></td><td><label id="enigma_path" style="margin: auto;">{{service.path}}</label></td></tr>
+					<tr><td><strong>ENIGMA_TOKEN:</strong></td><td><label id="enigma_token" style="margin: auto;">{{service.token}}</label></td></tr>
+					<tr><td><strong>ENIGMA_KEY:</strong></td><td><label id="enigma_key" style="margin: auto;">{{service.encrypt_key}}</label></td></tr>
+					<tr><td colspan="2" class="pt-2 pb-2">
+						<a onclick="copyCurl()" class="btn btn-dark">Copy cURL</a>
+						<pre id="curl_code" class="p-2" style="background-color: lightgray"></pre>
+					</td></tr>
+				</table>
 			</div>
-		</form>
+		</div>
 	</div>
 </div>
 @endsection

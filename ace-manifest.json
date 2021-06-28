@@ -7,7 +7,7 @@
       },
       "commandPath": "./commands/DbCreate",
       "commandName": "db:create",
-      "description": "",
+      "description": "Create Database",
       "args": [],
       "aliases": [],
       "flags": []
