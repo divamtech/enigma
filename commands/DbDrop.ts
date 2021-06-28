@@ -1,7 +1,7 @@
 import { BaseCommand } from '@adonisjs/core/build/standalone'
 import Knex from 'knex'
 
-export default class DbDrop11 extends BaseCommand {
+export default class DbDrop extends BaseCommand {
   /**
    * Command name is used to run the command
    */
