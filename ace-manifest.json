@@ -2,7 +2,7 @@
   "commands": {
     "db:create": {
       "settings": {
-        "loadApp": false,
+        "loadApp": true,
         "stayAlive": false
       },
       "commandPath": "./commands/DbCreate",
@@ -14,12 +14,12 @@
     },
     "db:drop": {
       "settings": {
-        "loadApp": false,
+        "loadApp": true,
         "stayAlive": false
       },
       "commandPath": "./commands/DbDrop",
       "commandName": "db:drop",
-      "description": "",
+      "description": "Drop database",
       "args": [],
       "aliases": [],
       "flags": []
