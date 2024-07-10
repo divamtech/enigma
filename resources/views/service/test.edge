@@ -1,0 +1,199 @@
+@layout('master')
+
+@section('mainContent') 
+
+<script>
+	function jsonTextChange() {
+		val = $('#json-input').val()
+		try {
+			JSON.stringify(JSON.parse(val))
+			$('#submit_btn').prop( "disabled", false);
+			$('#invalid_json').hide();
+		} catch (e) {
+			$('#submit_btn').prop( "disabled", true);
+			$('#invalid_json').show();
+		}
+	}
+
+	function formatJSON() {
+		val = $('#json-input').val()
+		try {
+			$('#json-input').val(JSON.stringify(JSON.parse(val), null, 2))
+		} catch (e) {
+			$('#submit_btn').prop( "disabled", true);
+			$('#invalid_json').show();
+		}
+	}
+
+	$(document).ready(function() {
+		jsonTextChange()
+		$('#enigma_url').html(window.location.origin+$('#enigma_url').html());
+		$('#curl_code').html(curlCode('<br/>'));
+	});
+
+	function curlCode(joiner = ' ') {
+		const host = $('#enigma_url').html()
+		const body = {path: $('#enigma_path').html(), token: $('#enigma_token').html()}
+		return ["curl --location --request POST '"+host+"'",
+						"--header 'Content-Type: application/json'", 
+						"--data-raw '"+JSON.stringify(body)+"'"
+					].join(joiner)
+	}
+
+	function copyToClipboard(textToCopy) {
+		const elem = document.createElement('textarea');
+		elem.value = textToCopy;
+		document.body.appendChild(elem);
+		elem.select();
+		document.execCommand('copy');
+		document.body.removeChild(elem);
+	}
+
+	function copyENV() {
+		const toBeCopy = {
+			ENIGMA_URL: $('#enigma_url').html(),
+			ENIGMA_PATH: $('#enigma_path').html(),
+			ENIGMA_TOKEN: $('#enigma_token').html(),
+			ENIGMA_KEY: $('#enigma_key').html(),
+		}
+		const finalText = Object.keys(toBeCopy).reduce(function(acc, k, i, arr) {
+			return i+1 == arr.length ? acc + k+'='+toBeCopy[k] : acc + k+'='+toBeCopy[k] + '\\n'
+		}, '');
+		copyToClipboard(finalText);
+	}
+
+	function copyCurl() {
+		copyToClipboard(curlCode());
+	}
+
+	function copyJSON() {
+		copyToClipboard($('#json-input').val());
+	}
+
+	$(document).ready(function(){
+	var i = 1;
+
+		$("#add").click(function(){
+		i++;
+		$('#dynamic_field').append('<tr id="row'+i+'"><td><input type="text" name="key['+i+']" placeholder="Enter your key" class="form-control "/></td><td><input type="text" name="value['+i+']" placeholder="Enter your value" class="form-control"/></td><td><button type="button" name="remove" id="'+i+'" class="btn btn-danger btn_remove">X</button></td></tr>');  
+		});
+
+		$(document).on('click', '.btn_remove', function(){  
+		var button_id = $(this).attr("id");   
+		$('#row'+button_id+'').remove();  
+		});
+
+		$.fn.serializeObject = function()
+		{
+			var o = {};
+			var a = this.serializeArray();
+			$.each(a, function() {
+				if (o[this.name] !== undefined) {
+					if (!o[this.name].push) {
+						o[this.name] = [o[this.name]];
+					}
+					o[this.name].push(this.value || '');
+				} else {
+					o[this.name] = this.value || '';
+				}
+			});
+			return o;
+		};
+
+		$(function() {
+			$("#submit").on('click',function(){
+				$('#result').text(JSON.stringify($('#add_key').serializeObject()));
+				return false;
+			});
+		});
+	//	$("#submit").on('click',function(){
+	//	var formdata = $("#add_key").serialize();
+	//	$('#result').text(JSON.stringify($(formdata)));
+	//	});
+	});
+</script>
+
+<div class="d-flex justify-content-center align-items-center">
+	<div>
+		<table>
+			<tr>
+				<td colspan="2" class="pt-2 pb-2">
+					<div class="d-flex justify-content-between align-items-center">
+						<a href="/" class="btn btn-secondary">← Back</a>
+						<a onclick="copyENV()" class="btn btn-dark">Copy ENV</a>
+						<a href="/service/edit_path/{{service.id}}" class="btn btn-primary">Edit</a>
+						<a href="/service/regenerate_keys/{{service.id}}" class="btn btn-warning">Regenerate Keys</a>
+						<a href="/service/delete/{{service.id}}" data-method="delete" data-confirm="Are you sure?" class="btn btn-danger">Delete</a>
+					</div>
+				</td>
+			</tr>
+			<tr><td><strong>ENIGMA_URL:</strong></td><td><label id="enigma_url" style="margin: auto;">/api1/service</label></td></tr>
+			<tr><td><strong>ENIGMA_PATH:</strong></td><td><label id="enigma_path" style="margin: auto;">{{service.path}}</label></td></tr>
+			<tr><td><strong>ENIGMA_TOKEN:</strong></td><td><label id="enigma_token" style="margin: auto;">{{service.token}}</label></td></tr>
+			<tr><td><strong>ENIGMA_KEY:</strong></td><td><label id="enigma_key" style="margin: auto;">{{service.encrypt_key}}</label></td></tr>
+			<tr><td colspan="2" class="pt-2 pb-2">
+				<a onclick="copyCurl()" class="btn btn-dark">Copy cURL</a>
+				<pre id="curl_code" class="p-2" style="background-color: lightgray"></pre>
+			</td></tr>
+		</table>
+		<div class="span12">
+			<div id="tab" class="btn-group" data-toggle="buttons-radio">
+				<a href="#row-data" class="btn btn-large btn-info active" data-toggle="tab">Raw data</a>
+				<a href="#formdata" class="btn btn-large btn-info" data-toggle="tab">form data</a>
+			</div>
+		    <br>
+			<div class="tab-content">
+				<div class="tab-pane active" id="row-data">
+				<form method="post" action="/service/update/{{service.id}}">
+					{{ csrfField() }}
+					<div class="textarea-wrapper">
+					<textarea id="json-input" class="textarea1" autocomplete="off" rows="10" cols="85" name="json-input" onchange="jsonTextChange();"
+					onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();">{{service.value}}</textarea>
+					</div><br/>
+					<div id="invalid_json" style="display: none;" class="mb-2">
+						<span class="badge badge-danger">Invalid JSON</span><br/>
+					</div>
+					<div class="d-flex justify-content-between align-items-center">
+					<button id="submit_btn" class="btn btn-primary" type="submit">Save</button>
+					<a onclick="copyJSON()" class="btn btn-dark">Copy JSON</a>
+					<a id="format_btn" class="btn btn-success" onclick="formatJSON()">Format JSON</a>
+					</div>
+				</form>
+				</div>
+
+				<div class="tab-pane" id="formdata">
+					<form name="add_key" id="add_key">
+						<table class="table table-bordered table-hover" id="dynamic_field">
+							<tr>
+								<td>Key</td>
+								<td>Value</td>
+							  </tr>
+						  <tr>
+							<td><input type="text" name="key[]" placeholder="Enter your key" class="form-control" /></td>
+							<td><input type="text" name="value[]" placeholder="Enter your value" class="form-control"/></td>
+							<td><button type="button" name="add" id="add" class="btn btn-primary">Add More</button></td>  
+						  </tr>
+						</table>
+						<input type="submit" class="btn btn-success" name="submit" id="submit" value="Submit">
+					  </form>
+					  
+					<form method="post" action="/service/update/{{service.id}}">
+						{{ csrfField() }}
+						<div class="textarea-wrapper">
+						<textarea id="result" class="textarea1" autocomplete="off" rows="10" cols="85" name="json-input">{{service.value}}
+						</textarea>
+
+						</div><br/>
+						<div id="invalid_json" style="display: none;" class="mb-2">
+							<span class="badge badge-danger">Invalid JSON</span><br/>
+						</div>
+						<div class="d-flex justify-content-between align-items-center">
+						<button id="submit_btn" class="btn btn-primary" type="submit">Save</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+@endsection

@@ -1,4 +1,5 @@
 # <img src="public/icons/icon32.png" width="32" height="32" /> nigma
+
 Enigma is a lightweight nodeJS application to store environment variable securely and transfer though API. Very useful to update, pass to ECS and easy to manage. You can also run it to aws:lambda for production preferred and heroku for testing/sandbox env.
 
 <img src="public/enigma_screen.png" width="100%" alt="enigma_page" />
@@ -13,6 +14,7 @@ curl --location --request POST 'https://<host>/api1/service' \
 ```
 
 ## Encryption technique
+
 `AES-256-CBC` which require `iv:16` and `key:32` which include as complete encryption key as first 16 chars are `iv` and rest 32 chars are `enc_key`.
 
 Generate key using `adonis enc_key_gen`, like `Key: e8768e43c7a6047ebf3c199c2470cb477d907b1e0917c17b`. Key has 48 chars where first 16chars are iv as `e8768e43c7a6047e` and rest 32 chars are encryption key as `bf3c199c2470cb477d907b1e0917c17b`.
@@ -21,28 +23,28 @@ Generate key using `adonis enc_key_gen`, like `Key: e8768e43c7a6047ebf3c199c2470
 // NodeJS
 const crypto = require('crypto');
 
-const iv = 'e8768e43c7a6047e'
-const enc_key = 'bf3c199c2470cb477d907b1e0917c17b'
-const plain_text = '{"hello":"world"}'
-const encrypted_text = 'l/w30rTVW1xu1Mq2K+jvPATSbWspWKqDtEFHyLPaiY8='
+const iv = 'e8768e43c7a6047e';
+const enc_key = 'bf3c199c2470cb477d907b1e0917c17b';
+const plain_text = '{"hello":"world"}';
+const encrypted_text = 'l/w30rTVW1xu1Mq2K+jvPATSbWspWKqDtEFHyLPaiY8=';
 
-var encrypt = ((plain) => {
+var encrypt = (plain) => {
   let cipher = crypto.createCipheriv('aes-256-cbc', enc_key, iv);
   let encrypted = cipher.update(plain, 'utf8', 'base64');
   encrypted += cipher.final('base64');
   return encrypted;
-});
+};
 
-var decrypt = ((encrypted) => {
+var decrypt = (encrypted) => {
   let decipher = crypto.createDecipheriv('aes-256-cbc', enc_key, iv);
   let decrypted = decipher.update(encrypted, 'base64', 'utf8');
-  return (decrypted + decipher.final('utf8'));
-});
+  return decrypted + decipher.final('utf8');
+};
 
 const encrypted_key = encrypt(plain_text);
-console.log(encrypted_key)
+console.log(encrypted_key);
 const original_text = decrypt(encrypted_text);
-console.log(original_text)
+console.log(original_text);
 ```
 
 ```ruby
@@ -72,6 +74,7 @@ puts dplain
 ```
 
 ### Rails Integration
+
 1. Make file at `config/enigma.rb`
 
 ```ruby
@@ -107,6 +110,7 @@ end
 ```
 
 2. Create enigma enable at `config/application.rb` as:
+
 ```ruby
 #config/application.rb
 
@@ -138,3 +142,19 @@ end
 [see more code references at gist](https://gist.github.com/dayitv89/0db2bb1468108b07a7b7fdc38b27964b)
 
 ##### Under MIT License
+
+### Heroku
+
+```sh
+heroku login
+git remote add heroku https://git.heroku.com/<app_name>.git
+git push heroku <branch_name>:master
+```
+
+like
+
+```sh
+heroku login
+git remote add heroku https://git.heroku.com/g-enigma.git
+git push heroku develop:master
+```

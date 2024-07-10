@@ -5,11 +5,15 @@
   <title>Enigma</title>
   <meta http-equiv="content-language" content="en" />
   <meta name="google" content="notranslate" />
-  <link rel="stylesheet" href="/yeti/bootstrap.min.css">
-  <script src="/yeti/jquery.min.js"></script>
-  <script src="/yeti/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="{{ asset('assets/app.css') }}">
+  <script src="{{ asset('assets/app.js') }}"></script>
+
+
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
-  {{ cspMeta() }}
 </head>
 <body>
   @include('partials/nav')
