@@ -1,35 +1,85 @@
-"use strict";
+const express = require("express");
+const cors = require("cors");
+const cookieSession = require("cookie-session");
 
-/*
-|--------------------------------------------------------------------------
-| Http server
-|--------------------------------------------------------------------------
-|
-| This file bootstrap Adonisjs to start the HTTP server. You are free to
-| customize the process of booting the http server.
-|
-| """ Loading ace commands """
-|     At times you may want to load ace commands when starting the HTTP server.
-|     Same can be done by chaining `loadCommands()` method after
-|
-| """ Preloading files """
-|     Also you can preload files by calling `preLoad('path/to/file')` method.
-|     Make sure to pass relative path from the project root.
-*/
 
-const fs = require("fs");
-try {
-  if (!fs.existsSync(".env") && fs.existsSync(".env.example")) {
-    var data = fs.readFileSync(".env.example");
-    fs.writeFileSync(".env", data);
-  }
-} catch (err) {
-  console.error(err);
+
+const app = express();
+
+app.use(cors());
+
+
+app.use(express.json())
+
+//need changes :
+const token = require('./app/config/auth.config')
+app.use(
+  cookieSession({
+    name: "enigma_session",
+    keys: token,
+    httpOnly: true,
+  })
+);
+
+
+
+const db = require('./app/models');
+
+
+app.use(express.json());
+
+
+
+
+const Role = db.role;
+
+
+db.sequelize.sync({ force: true }).then(() => {
+  console.log('Drop and Resync Db');
+  initial();
+}).catch(err => {
+  console.error('Error while syncing Sequelize:', err);
+});
+
+
+function initial() {
+  Role.create({
+    id: 1,
+    name: 'user'
+  }).then(role => {
+    console.log(`Created role: ${role.name}`);
+  }).catch(err => {
+    console.error('Error creating role:', err);
+  });
+
+  Role.create({
+    id: 2,
+    name: 'moderator'
+  }).then(role => {
+    console.log(`Created role: ${role.name}`);
+  }).catch(err => {
+    console.error('Error creating role:', err);
+  });
+
+  Role.create({
+    id: 3,
+    name: 'admin'
+  }).then(role => {
+    console.log(`Created role: ${role.name}`);
+  }).catch(err => {
+    console.error('Error creating role:', err);
+  });
 }
 
-const { Ignitor } = require("@adonisjs/ignitor");
+require('./app/routes/authRoutes')(app);
+require('./app/routes/usersRoutes')(app);
+// Example GET route for testing
+app.get('/', (req, res) => {
+  res.send('Hello, World!');
+});
 
-new Ignitor(require("@adonisjs/fold"))
-  .appRoot(__dirname)
-  .fireHttpServer()
-  .catch(console.error);
+// Start the server
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
