@@ -1,10 +1,14 @@
 const express = require("express");
 const cors = require("cors");
 const cookieSession = require("cookie-session");
+// const awsServerlessExpress = require('aws-serverless-express');
+const serverless = require('serverless-http')
+
 
 
 
 const app = express();
+const server = awsServerlessExpress.createServer(app);
 
 app.use(cors());
 
@@ -73,13 +77,26 @@ function initial() {
 
 require('./app/routes/authRoutes')(app);
 require('./app/routes/usersRoutes')(app);
-// Example GET route for testing
-app.get('/', (req, res) => {
-  res.send('Hello, World!');
-});
+
+
 
 // Start the server
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
+// const port = process.env.PORT || 3000;
+// app.listen(port, () => {
+//   console.log(`Server is running on http://localhost:${port}`);
+// });
+
+const startServer = async () => {
+  app.listen(3000, () => {
+    console.log('listening on port 3000!')
+  })
+}
+startServer()
+
+//lambda handling
+const handler = serverless(app)
+
+exports.handler = async (event, context, callback) => {
+  const response = handler(event, context, callback)
+  return response
+}
