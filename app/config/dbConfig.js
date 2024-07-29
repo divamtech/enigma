@@ -1,14 +1,15 @@
+require('dotenv').config()
 module.exports = {
-    HOST: "localhost",
-    PORT:3306,
-    USER: "root",
-    PASSWORD: "root1234",
-    DB: "enigma_vault",
-    dialect: "mysql",
-    pool: {
-      max: 5,
-      min: 0,
-      acquire: 30000,
-      idle: 10000
-    }
-  };
+  HOST: process.env.DB_HOST,
+  PORT: process.env.DB_PORT,
+  USER: process.env.DB_USER,
+  PASSWORD: process.env.DB_PASSWORD,
+  DB: process.env.DB_DATABASE,
+  dialect: process.env.DB_CONNECTION,
+  pool: {
+    max: 5,
+    min: 0,
+    acquire: 30000,
+    idle: 10000,
+  },
+}
