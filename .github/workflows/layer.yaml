@@ -8,6 +8,8 @@ on:
 jobs:
   deploy_layer:
     runs-on: ubuntu-latest
+    outputs:
+      layerVersion: ${{ steps.create_layer.outputs.layerVersion }}
     steps:
       - uses: actions/checkout@v2
 
@@ -55,6 +57,7 @@ jobs:
             --query Version \
             --output text)
           echo "::set-output name=layer_version::$LAYER_VERSION"
+          echo "layerVersion=layer_version::$LAYER_VERSION" >> "$GITHUB_OUTPUT"
 
   deploy_lambda:
     needs: deploy_layer
@@ -71,4 +74,4 @@ jobs:
         run: |
           aws lambda update-function-configuration \
             --function-name enigma_lambda \
-            --layers arn:aws:lambda:${{ secrets.AWS_REGION }}:$(aws sts get-caller-identity --query Account --output text):layer:enigma_layer:${{ jobs.deploy_layer.steps.create_layer.outputs.layer_version }}
+            --layers arn:aws:lambda:${{ secrets.AWS_REGION }}:$(aws sts get-caller-identity --query Account --output text):layer:enigma_layer:${{ needs.deploy_layer.outputs.layerVersion }}
