@@ -42,8 +42,8 @@ jobs:
           LAYER_VERSION=$(aws lambda publish-layer-version \
             --layer-name enigma_layer \
             --content S3Bucket=enigma.webledger.in,S3Key=layer.zip \
-            --compatible-runtimes nodejs16.x,nodejs18.x,nodejs20.x \
-            --Compatible-architectures x86_64,arm64 \
+            --compatible-runtimes nodejs18.x \
+            --Compatible-architectures x86_64 \
             --query Version \
             --output text)
           echo "::set-output name=layer_version::$LAYER_VERSION"
