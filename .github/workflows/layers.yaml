@@ -43,16 +43,10 @@ jobs:
             --layer-name enigma_layer \
             --content S3Bucket=enigma.webledger.in,S3Key=layer.zip \
             --compatible-runtimes nodejs16.x,nodejs18.x,nodejs20.x \
-            --Compatible-architectures x86_64,arm64\
+            --Compatible-architectures x86_64,arm64 \
             --query Version \
             --output text)
           echo "::set-output name=layer_version::$LAYER_VERSION"
-
-      - name: Add Tags to Lambda Layer
-        run: |
-          aws lambda tag-resource \
-            --resource arn:aws:lambda:${{ secrets.AWS_REGION }}:$(aws sts get-caller-identity --query Account --output text):layer:enigma_layer:${{ steps.create_layer.outputs.layer_version }} \
-            --tags Key1=Value1 Key2=Value2
 
       - name: Update Lambda function with new layer
         run: |
