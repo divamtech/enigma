@@ -6,7 +6,7 @@ on:
       - '*-layer'
 
 jobs:
-  deploy_lambda:
+  deploy_layer:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -55,6 +55,10 @@ jobs:
             --output text)
           echo "::set-output name=layer_version::$LAYER_VERSION"
 
+  deploy_lambda:
+    needs: deploy_layer
+    runs-on: ubuntu-latest
+    steps:
       - name: Update Lambda function with new layer
         run: |
           aws lambda update-function-configuration \
