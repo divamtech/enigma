@@ -20,10 +20,10 @@ jobs:
 
       - uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: '18'
 
       - name: Upgrade npm
-        run: npm install -g npm@8.1.2
+        run: npm install -g npm@10.7.0
 
       - name: Installing project dependencies
         run: npm install
@@ -41,6 +41,7 @@ jobs:
 
       - name: Upload layer.zip to S3
         run: |
+          cd layer
           aws s3 cp layer.zip s3://enigma.webledger.in/layer.zip
 
       - name: Create/Update Lambda Layer

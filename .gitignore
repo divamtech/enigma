@@ -13,3 +13,5 @@ database/*.sqlite
 .history
 .idea
 *.zip
+
+layer/
