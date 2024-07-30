@@ -7,9 +7,15 @@ require('dotenv').config()
 
 const app = express()
 
+const origin = ['https://enigma.webledger.in']
+
+if (process.env.NODE_ENV != 'production) {
+    origin.push('localhost:8080')
+}
+
 app.use(
   cors({
-    origin: 'https://enigma.webledger.in', // Allow this origin
+    origin, // Allow this origin
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
