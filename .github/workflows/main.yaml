@@ -2,8 +2,9 @@ name: deploy to lambda
 
 on:
   push:
-    tags:
-      - '*-lambda'
+    branches:
+      - master
+      - main
 
 jobs:
   deploy_lambda:

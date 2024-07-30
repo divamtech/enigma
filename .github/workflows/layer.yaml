@@ -56,8 +56,18 @@ jobs:
             --output text)
           echo "::set-output name=layer_version::$LAYER_VERSION"
 
+      - name: deploy lambda code
+        run: |
+          cd ./src
+          zip -r deploy.zip .
+          aws lambda update-function-code --function-name=enigma_lambda --zip-file=fileb://deploy.zip
+
       - name: Update Lambda function with new layer
         run: |
           aws lambda update-function-configuration \
             --function-name enigma_lambda \
             --layers arn:aws:lambda:${{ secrets.AWS_REGION }}:$(aws sts get-caller-identity --query Account --output text):layer:enigma_layer:${{ steps.create_layer.outputs.layer_version }}
+
+      - name: Delete layer.zip from S3
+        run: |
+          aws s3 rm s3://enigma.webledger.in/layer.zip
