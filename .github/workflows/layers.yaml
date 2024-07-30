@@ -3,7 +3,7 @@ name: deploy to lambda
 on:
   push:
     tags:
-      - 'v*'
+      - '*-layer'
 
 jobs:
   deploy_lambda:
