@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -34,7 +34,14 @@ jobs:
           cp -r node_modules package.json package-lock.json layer/nodejs/
           cd layer
           zip -r layer.zip nodejs
-          aws s3 cp layer.zip s3://enigma.webledger.in/layer.zip    
+
+      - name: Verify S3 Bucket
+        run: |
+          aws s3 ls s3://enigma.webledger.in || echo "Bucket not found or access denied"
+
+      - name: Upload layer.zip to S3
+        run: |
+          aws s3 cp layer.zip s3://enigma.webledger.in/layer.zip
 
       - name: Create/Update Lambda Layer
         id: create_layer
@@ -42,8 +49,8 @@ jobs:
           LAYER_VERSION=$(aws lambda publish-layer-version \
             --layer-name enigma_layer \
             --content S3Bucket=enigma.webledger.in,S3Key=layer.zip \
-            --compatible-runtimes nodejs18.x \
-            --Compatible-architectures x86_64 \
+            --compatible-runtimes nodejs16.x,nodejs18.x,nodejs20.x \
+            --compatible-architectures x86_64,arm64 \
             --query Version \
             --output text)
           echo "::set-output name=layer_version::$LAYER_VERSION"
