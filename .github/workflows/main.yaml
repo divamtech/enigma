@@ -38,7 +38,8 @@ jobs:
 
       - name: deploy
         run: |
-          zip -r deploy.zip ./src
+          cd ./src
+          zip -r deploy.zip .
           aws lambda update-function-code --function-name=enigma_lambda --zip-file=fileb://deploy.zip    
 
       - name: Create/Update Lambda Layer
