@@ -71,4 +71,4 @@ jobs:
         run: |
           aws lambda update-function-configuration \
             --function-name enigma_lambda \
-            --layers arn:aws:lambda:${{ secrets.AWS_REGION }}:$(aws sts get-caller-identity --query Account --output text):layer:enigma_layer:${{ steps.create_layer.outputs.layer_version }}
+            --layers arn:aws:lambda:${{ secrets.AWS_REGION }}:$(aws sts get-caller-identity --query Account --output text):layer:enigma_layer:${{ jobs.deploy_layer.steps.create_layer.outputs.layer_version }}
