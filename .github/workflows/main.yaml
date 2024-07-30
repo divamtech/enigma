@@ -1,0 +1,62 @@
+name: deploy to lambda
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy_lambda:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Upgrade npm
+        run: npm install -g npm@8.1.2
+
+      - name: Installing project dependencies
+        run: npm install
+
+      - name: Create node_modules zip for layer
+        run: |
+          mkdir -p layer/nodejs
+          cp -r node_modules package.json package-lock.json layer/nodejs/
+          cd layer
+          zip -r layer.zip nodejs
+          aws s3 cp layer.zip s3://enigma.webledger.in/layer.zip
+
+      - name: deploy
+        run: |
+          zip -j deploy.zip index.js
+          aws lambda update-function-code --function-name=enigma_lambda --zip-file=fileb://deploy.zip    
+
+      - name: Create/Update Lambda Layer
+        id: create_layer
+        run: |
+          LAYER_VERSION=$(aws lambda publish-layer-version \
+            --layer-name enigma_layer \
+            --content S3Bucket=enigma.webledger.in,S3Key=layer.zip \
+            --compatible-runtimes nodejs18.x \
+            --query Version \
+            --output text)
+          echo "::set-output name=layer_version::$LAYER_VERSION"
+
+      - name: Update Lambda function with new layer
+        run: |
+          aws lambda update-function-configuration \
+            --function-name enigma_lambda \
+            --layers arn:aws:lambda:${{ secrets.AWS_REGION }}:$(aws sts get-caller-identity --query Account --output text):layer:enigma_layer:${{ steps.create_layer.outputs.layer_version }}
+
+
+
