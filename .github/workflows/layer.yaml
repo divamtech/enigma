@@ -56,11 +56,12 @@ jobs:
             --output text)
           echo "::set-output name=layer_version::$LAYER_VERSION"
 
-      - name: deploy lambda code
-        run: |
-          cd ./src
-          zip -r deploy.zip .
-          aws lambda update-function-code --function-name=enigma_lambda --zip-file=fileb://deploy.zip
+      ### No need to push the code with lambda layer deploy process
+      # - name: deploy lambda code
+      #   run: |
+      #     cd ./src
+      #     zip -r deploy.zip .
+      #     aws lambda update-function-code --function-name=enigma_lambda --zip-file=fileb://deploy.zip
 
       - name: Update Lambda function with new layer
         run: |
