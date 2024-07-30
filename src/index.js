@@ -7,7 +7,14 @@ require('dotenv').config()
 
 const app = express()
 
-app.use(cors())
+app.use(
+  cors({
+    origin: 'https://enigma.webledger.in', // Allow this origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
+    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+  }),
+)
 
 app.use(express.json())
 
@@ -72,6 +79,9 @@ function initial() {
     })
 }
 
+app.get('/', (req, res) => {
+  res.status(200).send('hello world')
+})
 require('./app/routes/authRoutes')(app)
 require('./app/routes/usersRoutes')(app)
 
