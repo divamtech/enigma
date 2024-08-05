@@ -1,12 +1,12 @@
 const controller = require('../controllers/authController')
+const express = require('express')
+const router = express.Router()
+router.use((req, res, next) => {
+  res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept')
+  next()
+})
 
-module.exports = function (app) {
-  app.use(function (req, res, next) {
-    res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept')
-    next()
-  })
+// Define your routes
+router.post('/signin', controller.signin)
 
-  app.post('/api/auth/signin', controller.signin)
-
-  // app.post("/api/auth/signout", controller.signout);
-}
+module.exports = router
