@@ -31,7 +31,6 @@ const getEnvDataByPath = async (req, res) => {
 
   try {
     const envData = await EnvData.findOne({ where: { path } }) // Find the record by path
-
     if (envData) {
       res.json(envData) // Send the data as JSON
     } else {

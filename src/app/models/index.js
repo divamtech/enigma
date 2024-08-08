@@ -31,5 +31,6 @@ db.Sequelize = Sequelize
 db.sequelize = sequelize
 
 db.user = require('./user')(sequelize, Sequelize)
-db.envData = require('./envData')(sequelize,Sequelize)
+db.envData = require('./envData')(sequelize, Sequelize)
+db.pathNode = require('./pathNode')(sequelize,Sequelize)
 module.exports = db
